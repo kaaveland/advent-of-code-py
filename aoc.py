@@ -14,6 +14,7 @@ UAGENT_PATH = pathlib.Path.home() / ".aoc_uagent"
 HERE = pathlib.Path(__file__).parent
 cli = typer.Typer(no_args_is_help=True)
 
+
 def get_cookie() -> str:
     try:
         with open(COOKIE_PATH) as inf:
@@ -71,15 +72,18 @@ def get_data(year: int, day: int) -> str:
             out.write(data)
         return data
 
+
 @attr.s
 class Result:
     output: str = attr.ib()
     duration: float = attr.ib()
 
+
 class NotImplementModule:
     @staticmethod
     def main(_inp: str) -> str:
         return "Not implemented yet"
+
 
 def run_one(year: int, day: int) -> Result:
     data = get_data(year, day)
@@ -92,29 +96,29 @@ def run_one(year: int, day: int) -> Result:
     duration = 1000 * (time.time() - start)
     return Result(result, duration)
 
+
 @cli.command("run")
 def run(year: int, day: int):
     result = run_one(year, day)
     print(f"{year}-{day:02d} result in {result.duration:.3f}ms:\n{result.output}")
 
+
 def _run(yearday: (int, int)):
     year, day = yearday
     return year, day, run_one(year, day)
+
 
 @cli.command("runall")
 def run(year: int):
     start = time.time()
 
-
     with ProcessPoolExecutor() as pool:
-        results = pool.map(
-            _run,
-            [(year, day) for day in range(1, 26)]
-        )
+        results = pool.map(_run, [(year, day) for day in range(1, 26)])
     total = 1000 * (time.time() - start)
-    for (year, day, result) in results:
+    for year, day, result in results:
         print(f"{year}-{day:02d} result in {result.duration:.3f}ms:\n{result.output}")
     print(f"Total duration: {total:.3f}ms")
+
 
 if __name__ == "__main__":
     cli()

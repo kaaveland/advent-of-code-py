@@ -8,10 +8,7 @@ example: str = """7 6 4 2 1
 
 
 def main(inp: str) -> str:
-    reports = [
-        [int(n) for n in line.split()]
-        for line in inp.splitlines()
-    ]
+    reports = [[int(n) for n in line.split()] for line in inp.splitlines()]
     p1 = len([r for r in reports if safe(r)])
     p2 = len([r for r in reports if safe_with_removal(r)])
     return f"Part 1: {p1}, Part 2: {p2}"
@@ -30,8 +27,7 @@ def safe(report):
 
 def safe_with_removal(report):
     return any(
-        safe(r) for r in
-        [report[:i] + report[i + 1 :] for i in range(len(report))]
+        safe(r) for r in [report[:i] + report[i + 1 :] for i in range(len(report))]
     )
 
 
