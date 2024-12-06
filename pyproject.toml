@@ -11,3 +11,7 @@ dependencies = [
     "attrs>=24.2.0",
 ]
 optional-dependencies = { }
+license = {text = "MIT License"}
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+]

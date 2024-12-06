@@ -87,5 +87,5 @@ def main(input: str) -> str:
     return f"Part 1: {p1}, Part 2: {p2}"
 
 
-if __name__ == "__main__":
-    print(main(example))
+def test_day_6():
+    assert main(example) == "Part 1: 41, Part 2: 6"
