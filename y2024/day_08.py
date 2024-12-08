@@ -25,19 +25,11 @@ def parse(input: str) -> dict[str, List[Tuple[int, int]]]:
                 out[ch].append((x, y))
     return out
 
-def gcd(a: int, b: int) -> int:
-    if not b:
-        return a
-    else:
-        return gcd(b, a % b)
-
 def antinodes(antenna_1, antenna_2, height, width, dir=-1) -> Generator[Tuple[int, int]]:
     x1, y1 = antenna_1
     x2, y2 = antenna_2
     dx, dy = x2 - x1, y2 - y1
     x, y = (x1, y1) if dir < 0 else (x2, y2)
-    g = gcd(dx, dy)
-    dx, dy = dx // g, dy // g
     while 0 <= x < width and 0 <= y < height:
         yield x, y
         x += dir * dx
@@ -71,8 +63,3 @@ def main(input: str) -> str:
 
 def test_day_8():
     assert main(example) == 'Part 1: 14, Part 2: 34'
-
-def test_gcd():
-    assert gcd(4, 2) == 2
-    assert gcd(4, 3) == 1
-    assert gcd(15, 5) == 5
