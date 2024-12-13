@@ -23,10 +23,10 @@ def main(input: str) -> str:
     stones = parse(input)
     for _ in range(25):
         stones = blink(stones)
-    p1 = sum(count for count in stones.values())
+    p1 = sum(stones.values())
     for _ in range(50):
         stones = blink(stones)
-    p2 = sum(count for count in stones.values())
+    p2 = sum(stones.values())
     return f"Part 1: {p1}, Part 2: {p2}"
 
 if __name__ == '__main__':
