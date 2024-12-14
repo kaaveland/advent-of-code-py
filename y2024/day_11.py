@@ -8,7 +8,7 @@ def parse(input: str) -> dict[int, int]:
 
 
 def blink(stones: dict[int, int]) -> dict[int, int]:
-    after = {}
+    after: dict[int, int] = {}
     for stone, count in stones.items():
         digits = str(stone)
         if stone == 0:  # replace them all with 1s

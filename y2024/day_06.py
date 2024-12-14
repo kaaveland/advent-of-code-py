@@ -18,9 +18,11 @@ def resolve_segment(segment, cache, end_pos, end_dir):
         cache[(seg_pos, seg_dir)] = (end_pos, end_dir)
 
 
-def build_path_cache(grid, pos) -> dict[((int, int), int), ((int, int), int)]:
+def build_path_cache(
+    grid, pos
+) -> dict[tuple[tuple[int, int], int], tuple[tuple[int, int], int]]:
     dir = 0
-    cache = {}
+    cache: dict[tuple[tuple[int, int], int], tuple[tuple[int, int], int]] = {}
     segment_keys = []
     width, height = len(grid[0]), len(grid)
 

@@ -32,11 +32,11 @@ example: str = """47|53
 
 
 def main(input: str) -> str:
-    rules, updates = input.split("\n\n")
-    rules = {line.strip() for line in rules.split()}
+    in_rules, in_updates = input.split("\n\n")
+    rules = {line.strip() for line in in_rules.split()}
     updates = [
         [int(n.strip()) for n in update.split(",")]
-        for update in updates.splitlines()
+        for update in in_updates.splitlines()
         if update.strip()
     ]
 

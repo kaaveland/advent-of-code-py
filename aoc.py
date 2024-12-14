@@ -4,6 +4,7 @@ import pathlib
 import importlib
 import time
 from concurrent.futures import ProcessPoolExecutor
+from typing import Any
 
 import attr
 import typer
@@ -87,11 +88,15 @@ class NotImplementModule:
 
 def run_one(year: int, day: int) -> Result:
     try:
-        mod = importlib.import_module(f"y{year}.day_{day:02d}")
-        data = get_data(year, day)
+        mod: Any = importlib.import_module(f"y{year}.day_{day:02d}")
     except ImportError:
         mod = NotImplementModule
+
+    if mod is NotImplementModule:
         data = ""
+    else:
+        data = get_data(year, day)
+
     start = time.time()
     result = mod.main(data)
     duration = 1000 * (time.time() - start)
@@ -110,7 +115,7 @@ def _run(yearday: tuple[int, int]):
 
 
 @cli.command("runall")
-def run(year: int):
+def runall(year: int):
     start = time.time()
 
     with ProcessPoolExecutor() as pool:

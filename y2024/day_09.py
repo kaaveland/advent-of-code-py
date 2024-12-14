@@ -38,7 +38,7 @@ def checksum(disk: list[int]):
 
 def defragment_disk(disk: list[int]):
     # find space locations
-    space_indexes = [[] for _ in range(10)]
+    space_indexes: list[list[tuple[int, int]]] = [[] for _ in range(10)]
     i = 0
     start = None
     while i < len(disk):

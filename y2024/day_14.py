@@ -33,8 +33,10 @@ def positions(
     width: int,
     height: int,
 ) -> Iterable[tuple[int, int]]:
-    for (px, py), (vx, vy) in bots:
-        yield (px + vx * time) % width, (py + vy * time) % height
+    return (
+        ((px + vx * time) % width, (py + vy * time) % height)
+        for (px, py), (vx, vy) in bots
+    )
 
 
 def safety_score(positions: Iterable[tuple[int, int]], width: int, height: int) -> int:

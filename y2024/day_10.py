@@ -43,15 +43,17 @@ class Grid:
 
 
 def trail_metrics(grid: Grid, trailhead: tuple[int, int]) -> tuple[int, int]:
-    visited = defaultdict(int)
+    visited: dict[tuple[int, int], int] = defaultdict(int)
     work = [trailhead]
     while work:
         x, y = work.pop()
         here = grid.get((x, y))
+        assert here is not None
         visited[(x, y)] += 1
         for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
             nx, ny = x + dx, y + dy
-            if (nx, ny) in grid and grid.get((nx, ny)) == here + 1:
+            next_height = grid.get((nx, ny))
+            if next_height is not None and next_height == here + 1:
                 work.append((nx, ny))
     score = sum(grid.get((x, y)) == 9 for x, y in visited)
     rating = sum(v for (x, y), v in visited.items() if grid.get((x, y)) == 9)
