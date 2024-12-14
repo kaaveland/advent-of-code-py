@@ -56,12 +56,35 @@ def safety_score(positions: Iterable[tuple[int, int]], width: int, height: int) 
 
 def christmas_tree(
     bots: list[tuple[tuple[int, int], tuple[int, int]]], width: int, height: int
-) -> Optional[int]:
-    for time in range(width * height):
-        pos = set(positions(bots, time, width, height))
-        if len(pos) == len(bots):
-            return time
-    return None
+) -> int:
+    # x positions cycle every width time, and y positions cycle every height time
+    # assume that the christmas tree is both tall and wide. If we make a frequency
+    # table of x positions and y positions for every time in the cycle, we know
+    # the place in the cycle that maximizes the amount of bots in the same column/row
+    max_x = max_y = 0
+    x_t = y_t = 0
+
+    for time in range(max(width, height)):
+        x_freq = [0 for _ in range(width)]
+        y_freq = [0 for _ in range(height)]
+        for x, y in positions(bots, time, width=width, height=height):
+            x_freq[x] += 1
+            y_freq[y] += 1
+        # Potential column height of bots in this part of their width-cycle
+        col_height = max(x_freq)
+        if col_height > max_x:
+            x_t = time
+            max_x = col_height
+        row_width = max(y_freq)
+        if row_width > max_y:
+            y_t = time
+            max_y = row_width
+    # Now we have that the time t must be such that t % width = x_t and t % height = y_t
+    # Simply add width to x_t until time % height = y_t
+    time = x_t
+    while time % height != y_t:
+        time += width
+    return time
 
 
 def main(input: str) -> str:
