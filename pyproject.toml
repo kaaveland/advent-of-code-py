@@ -9,6 +9,7 @@ dependencies = [
     "pytest",
     "typer>=0.14.0",
     "attrs>=24.2.0",
+    "black>=24.10.0",
 ]
 optional-dependencies = { }
 license = {text = "MIT License"}

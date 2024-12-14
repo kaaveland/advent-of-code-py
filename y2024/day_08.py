@@ -17,15 +17,19 @@ example: str = """............
 ............
 """
 
+
 def parse(input: str) -> dict[str, List[Tuple[int, int]]]:
     out = defaultdict(list)
     for y, line in enumerate(input.splitlines()):
         for x, ch in enumerate(line):
-            if ch != '.':
+            if ch != ".":
                 out[ch].append((x, y))
     return out
 
-def antinodes(antenna_1, antenna_2, height, width, dir=-1) -> Generator[Tuple[int, int]]:
+
+def antinodes(
+    antenna_1, antenna_2, height, width, dir=-1
+) -> Generator[Tuple[int, int]]:
     x1, y1 = antenna_1
     x2, y2 = antenna_2
     dx, dy = x2 - x1, y2 - y1
@@ -35,22 +39,22 @@ def antinodes(antenna_1, antenna_2, height, width, dir=-1) -> Generator[Tuple[in
         x += dir * dx
         y += dir * dy
 
+
 def p1_antinodes(antenna_1, antenna_2, height, width) -> Iterable[Tuple[int, int]]:
     gen = partial(antinodes, antenna_1, antenna_2, height, width)
-    return chain(
-        islice(gen(dir=-1), 1, 2), islice(gen(dir=1), 1, 2)
-    )
+    return chain(islice(gen(dir=-1), 1, 2), islice(gen(dir=1), 1, 2))
+
 
 def p2_antinodes(antenna_1, antenna_2, height, width) -> Iterable[Tuple[int, int]]:
     gen = partial(antinodes, antenna_1, antenna_2, height, width)
-    return chain(
-        gen(dir=-1), gen(dir=1)
-    )
+    return chain(gen(dir=-1), gen(dir=1))
 
-def group_antinodes(group: list[Tuple[int, int]], generator) -> Iterable[Tuple[int, int]]:
-    return chain(*[
-        generator(a, b) for a, b in combinations(group, 2)
-    ])
+
+def group_antinodes(
+    group: list[Tuple[int, int]], generator
+) -> Iterable[Tuple[int, int]]:
+    return chain(*[generator(a, b) for a, b in combinations(group, 2)])
+
 
 def main(input: str) -> str:
     height, width = len(input.splitlines()), len(input.splitlines()[0])
@@ -61,5 +65,6 @@ def main(input: str) -> str:
     p2 = set(chain(*[group_antinodes(group, gen_p2) for group in antennas.values()]))
     return f"Part 1: {len(p1)}, Part 2: {len(p2)}"
 
+
 def test_day_8():
-    assert main(example) == 'Part 1: 14, Part 2: 34'
+    assert main(example) == "Part 1: 14, Part 2: 34"

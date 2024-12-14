@@ -2,6 +2,7 @@ import heapq
 
 example: str = "2333133121414131402"
 
+
 def parse(inp: str) -> list[int]:
     disk = []
     for i, ch in enumerate(inp):
@@ -13,6 +14,7 @@ def parse(inp: str) -> list[int]:
             for _ in range(int(ch)):
                 disk.append(-1)
     return disk
+
 
 def fragment_disk(disk: list[int]):
     fp = len(disk) - 1
@@ -29,8 +31,10 @@ def fragment_disk(disk: list[int]):
             sp += 1
             fp -= 1
 
+
 def checksum(disk: list[int]):
     return sum(i * v for i, v in enumerate(disk) if v != -1)
+
 
 def defragment_disk(disk: list[int]):
     # find space locations
@@ -63,14 +67,16 @@ def defragment_disk(disk: list[int]):
         end += 1
         fsize = end - start
         try:
-            chosen_heap = min([h for h in space_indexes[fsize:] if h], key=lambda heap: heap[0])
+            chosen_heap = min(
+                [h for h in space_indexes[fsize:] if h], key=lambda heap: heap[0]
+            )
         except ValueError:
-            continue # No heap has room
+            continue  # No heap has room
         space_start, space_end = heapq.heappop(chosen_heap)
         if start < space_start:
             continue
-        disk[space_start:space_start + fsize] = disk[start:end]
-        disk[start:end] = [ -1 for _ in range(fsize)]
+        disk[space_start : space_start + fsize] = disk[start:end]
+        disk[start:end] = [-1 for _ in range(fsize)]
         remaining = space_end - space_start - fsize
         if remaining:
             heapq.heappush(space_indexes[remaining], (space_start + fsize, space_end))

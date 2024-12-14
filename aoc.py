@@ -86,11 +86,12 @@ class NotImplementModule:
 
 
 def run_one(year: int, day: int) -> Result:
-    data = get_data(year, day)
     try:
         mod = importlib.import_module(f"y{year}.day_{day:02d}")
+        data = get_data(year, day)
     except ImportError:
         mod = NotImplementModule
+        data = ""
     start = time.time()
     result = mod.main(data)
     duration = 1000 * (time.time() - start)
@@ -103,7 +104,7 @@ def run(year: int, day: int):
     print(f"{year}-{day:02d} result in {result.duration:.3f}ms:\n{result.output}")
 
 
-def _run(yearday: (int, int)):
+def _run(yearday: tuple[int, int]):
     year, day = yearday
     return year, day, run_one(year, day)
 

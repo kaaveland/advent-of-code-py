@@ -12,14 +12,17 @@ example: str = """190: 10 19
 292: 11 6 16 20
 """
 
+
 def conc(left, right):
     exp = int(log10(right)) + 1
-    return int(left * (10 ** exp) + right)
+    return int(left * (10**exp) + right)
+
 
 def main(input: str) -> str:
     equations = [
-        (int(l.split(':')[0]), [int(n) for n in l.split(':')[1].split()])
-        for l in input.splitlines() if l.strip()
+        (int(l.split(":")[0]), [int(n) for n in l.split(":")[1].split()])
+        for l in input.splitlines()
+        if l.strip()
     ]
 
     def reduces(left, rest, target, ops):
@@ -28,17 +31,16 @@ def main(input: str) -> str:
         elif not rest:
             return left == target
         else:
-            return any(
-                reduces(op(left, rest[0]), rest[1:], target, ops)
-                for op in ops
-            )
+            return any(reduces(op(left, rest[0]), rest[1:], target, ops) for op in ops)
 
     p1 = sum(
-        target for target, operands in equations
+        target
+        for target, operands in equations
         if reduces(operands[0], operands[1:], target, ops=[mul, add])
     )
     p2 = sum(
-        target for target, operands in equations
+        target
+        for target, operands in equations
         if reduces(operands[0], operands[1:], target, ops=[mul, add, conc])
     )
     return f"Part 1: {p1}, Part 2: {p2}"
@@ -46,6 +48,7 @@ def main(input: str) -> str:
 
 def test_conc():
     assert conc(12, 345) == 12345
+
 
 def test_day_07():
     assert main(example) == "Part 1: 3749, Part 2: 11387"
