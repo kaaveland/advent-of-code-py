@@ -67,9 +67,9 @@ def christmas_tree(
     for time in range(max(width, height)):
         x_freq = [0 for _ in range(width)]
         y_freq = [0 for _ in range(height)]
-        for x, y in positions(bots, time, width=width, height=height):
-            x_freq[x] += 1
-            y_freq[y] += 1
+        for (px, py), (vx, vy) in bots:
+            x_freq[(px + vx * time) % width] += 1
+            y_freq[(py + vy * time) % height] += 1
         # Potential column height of bots in this part of their width-cycle
         col_height = max(x_freq)
         if col_height > max_x:
