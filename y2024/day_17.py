@@ -1,6 +1,9 @@
 import re
 from collections import deque
-from typing import Iterable, Iterator
+from typing import Iterator
+
+
+combo_operand_ops: set[int] = {0, 6, 7, 2, 5}
 
 
 def run_program(
@@ -15,7 +18,7 @@ def run_program(
                 5: reg_b,
                 6: reg_c,
             }.get(operand, operand)
-            if op in {0, 6, 7, 2, 5}
+            if op in combo_operand_ops
             else operand
         )
         if op == 0:  # adv
@@ -52,7 +55,9 @@ Register C: (\d+)
 Program: (.+)$"""
     )
     m = prog_re.match(inp)
-    reg_a, reg_b, reg_c, prog = m.group(1), m.group(2), m.group(3), m.group(4)
+    if m is None:
+        raise ValueError(f"Invalid input: {inp}")
+    reg_a, reg_b, reg_c, prog = m.groups()
     prog = [int(n) for n in prog.split(",")]
     out = run_program(prog, int(reg_a), int(reg_b), int(reg_c))
     p1 = ",".join(str(n) for n in out)

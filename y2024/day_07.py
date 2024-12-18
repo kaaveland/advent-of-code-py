@@ -25,7 +25,7 @@ def conc(left: int, right: int) -> int:
 @numba.jit(cache=True, nopython=True, fastmath=True)
 def reduces(operands: list[int], target: int, include_conc: bool = False) -> bool:
     head, tail = operands[0], operands[1:]
-    work: list[tuple[int, int]] = [(head, tail)]
+    work: list[tuple[int, list[int]]] = [(head, tail)]
     while work:
         head, tail = work.pop()
         if head > target:
