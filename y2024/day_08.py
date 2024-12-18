@@ -1,7 +1,7 @@
 from collections import defaultdict
 from functools import partial
 from itertools import islice, chain, combinations
-from typing import Generator, Tuple, List, Iterable
+from typing import Tuple, List, Iterable
 
 example: str = """............
 ........0...
@@ -27,9 +27,7 @@ def parse(input: str) -> dict[str, List[Tuple[int, int]]]:
     return out
 
 
-def antinodes(
-    antenna_1, antenna_2, height, width, dir=-1
-) -> Generator[Tuple[int, int]]:
+def antinodes(antenna_1, antenna_2, height, width, dir=-1) -> Iterable[Tuple[int, int]]:
     x1, y1 = antenna_1
     x2, y2 = antenna_2
     dx, dy = x2 - x1, y2 - y1

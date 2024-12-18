@@ -1,5 +1,6 @@
-from operator import mul, add
 from math import log10
+import numba
+import numba.typed
 
 example: str = """190: 10 19
 3267: 81 40 27
@@ -13,9 +14,31 @@ example: str = """190: 10 19
 """
 
 
-def conc(left, right):
+@numba.jit(
+    numba.int64(numba.int64, numba.int64), nopython=True, cache=True, fastmath=True
+)
+def conc(left: int, right: int) -> int:
     exp = int(log10(right)) + 1
     return int(left * (10**exp) + right)
+
+
+@numba.jit(cache=True, nopython=True, fastmath=True)
+def reduces(operands: list[int], target: int, include_conc: bool = False) -> bool:
+    head, tail = operands[0], operands[1:]
+    work: list[tuple[int, int]] = [(head, tail)]
+    while work:
+        head, tail = work.pop()
+        if head > target:
+            continue
+        elif not tail and head == target:
+            return True
+        elif tail:
+            ntail = tail[1:]
+            work.append((head * tail[0], ntail))
+            work.append((head + tail[0], ntail))
+            if include_conc:
+                work.append((conc(head, tail[0]), ntail))
+    return False
 
 
 def main(input: str) -> str:
@@ -25,23 +48,18 @@ def main(input: str) -> str:
         if l.strip()
     ]
 
-    def reduces(left, rest, target, ops):
-        if left > target:
-            return False
-        elif not rest:
-            return left == target
-        else:
-            return any(reduces(op(left, rest[0]), rest[1:], target, ops) for op in ops)
+    p1_ans = [
+        (i, target)
+        for i, (target, operands) in enumerate(equations)
+        if reduces(operands, target, False)
+    ]
+    p1_solved = {i for i, _ in p1_ans}
 
-    p1 = sum(
-        target
-        for target, operands in equations
-        if reduces(operands[0], operands[1:], target, ops=[mul, add])
-    )
+    p1 = sum(target for _, target in p1_ans)
     p2 = sum(
         target
-        for target, operands in equations
-        if reduces(operands[0], operands[1:], target, ops=[mul, add, conc])
+        for i, (target, operands) in enumerate(equations)
+        if i in p1_solved or reduces(operands, target, True)
     )
     return f"Part 1: {p1}, Part 2: {p2}"
 

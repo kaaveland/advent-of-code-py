@@ -9,6 +9,7 @@ from typing import Any
 import attr
 import typer
 import requests
+import cProfile
 
 COOKIE_PATH = pathlib.Path.home() / ".aoc_cookie"
 UAGENT_PATH = pathlib.Path.home() / ".aoc_uagent"
@@ -86,7 +87,7 @@ class NotImplementModule:
         return "Not implemented yet"
 
 
-def run_one(year: int, day: int) -> Result:
+def run_one(year: int, day: int, profile: bool = False) -> Result:
     try:
         mod: Any = importlib.import_module(f"y{year}.day_{day:02d}")
     except ImportError:
@@ -98,14 +99,16 @@ def run_one(year: int, day: int) -> Result:
         data = get_data(year, day)
 
     start = time.time()
+    if profile:
+        cProfile.runctx("mod.main(data)", globals(), locals(), sort="cumtime")
     result = mod.main(data)
     duration = 1000 * (time.time() - start)
     return Result(result, duration)
 
 
 @cli.command("run")
-def run(year: int, day: int):
-    result = run_one(year, day)
+def run(year: int, day: int, profile: bool = False):
+    result = run_one(year, day, profile)
     print(f"{year}-{day:02d} result in {result.duration:.3f}ms:\n{result.output}")
 
 
