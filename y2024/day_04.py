@@ -1,5 +1,3 @@
-import numba
-
 example: str = """MMMSXXMASM
 MSAMXMSMSA
 AMXSXMAAMM

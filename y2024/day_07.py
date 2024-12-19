@@ -1,6 +1,7 @@
 from math import log10
-import numba
-import numba.typed
+
+# import numba
+# import numba.typed
 
 example: str = """190: 10 19
 3267: 81 40 27
@@ -14,15 +15,15 @@ example: str = """190: 10 19
 """
 
 
-@numba.jit(
-    numba.int64(numba.int64, numba.int64), nopython=True, cache=True, fastmath=True
-)
+# @numba.jit(
+#    numba.int64(numba.int64, numba.int64), nopython=True, cache=True, fastmath=True
+# )
 def conc(left: int, right: int) -> int:
     exp = int(log10(right)) + 1
     return int(left * (10**exp) + right)
 
 
-@numba.jit(cache=True, nopython=True, fastmath=True)
+# @numba.jit(cache=True, nopython=True, fastmath=True)
 def reduces(operands: list[int], target: int, include_conc: bool = False) -> bool:
     head, tail = operands[0], operands[1:]
     work: list[tuple[int, list[int]]] = [(head, tail)]
