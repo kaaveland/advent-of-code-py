@@ -80,26 +80,29 @@ def manhattan_offsets(cheat_len: int) -> list[tuple[int, int, int]]:
     return offsets
 
 
-def find_cheats(inp: str, cheat_len: int) -> dict[int, int]:
-    m = maze(inp)
-    start, end = find_match(inp, "S"), find_match(inp, "E")
-    dist, parents = bfs(m, end)
-    cheats: dict[int, int] = defaultdict(int)
+def find_cheats(
+    dist: dict[Pos, int], path: list[Pos], cheat_len: int, mingain: int
+) -> int:
+    cheats: int = 0
     offsets = manhattan_offsets(cheat_len)
-
-    for x, y in find_path(parents, start):
+    for x, y in path:
         remaining = dist[(x, y)]
         for dx, dy, cost in offsets:
             nx, ny = x + dx, y + dy
-            if m.get((nx, ny)):
-                gain = remaining - dist[(nx, ny)] + cost
-                cheats[-gain] += 1
+            gain = dist.get((nx, ny), -1000) - cost - remaining
+            if gain >= mingain:
+                cheats += 1
     return cheats
 
 
 def main(inp: str) -> str:
-    p1 = sum(count for gain, count in find_cheats(inp, 2).items() if gain >= 100)
-    p2 = sum(count for gain, count in find_cheats(inp, 20).items() if gain >= 100)
+    m = maze(inp)
+    start, end = find_match(inp, "S"), find_match(inp, "E")
+    dist, parents = bfs(m, end)
+    path = find_path(parents, start)
+
+    p1 = find_cheats(dist, path, 2, 100)
+    p2 = find_cheats(dist, path, 20, 100)
     return f"Part 1: {p1}, Part 2: {p2}"
 
 
