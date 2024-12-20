@@ -13,7 +13,7 @@ bbrgwb
 """
 
 
-def parse(inp: str) -> (tuple[str], list[str]):
+def parse(inp: str) -> tuple[tuple[str, ...], list[str]]:
     first, second = inp.split("\n\n")
     return (
         tuple(first.split(", ")),
