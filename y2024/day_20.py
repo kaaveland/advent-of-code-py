@@ -71,8 +71,13 @@ def find_path(parents: dict[Pos, Optional[Pos]], pos: Pos) -> list[Pos]:
     return path
 
 
-def manhattan(left: Pos, right: Pos) -> int:
-    return abs(left[0] - right[0]) + abs(left[1] - right[1])
+def manhattan_offsets(cheat_len: int) -> list[tuple[int, int, int]]:
+    offsets = []
+    for dx in range(-cheat_len, cheat_len + 1):
+        max_dy = cheat_len - abs(dx)
+        for dy in range(-max_dy, max_dy + 1):
+            offsets.append((dx, dy, abs(dx) + abs(dy)))
+    return offsets
 
 
 def find_cheats(inp: str, cheat_len: int) -> dict[int, int]:
@@ -80,17 +85,15 @@ def find_cheats(inp: str, cheat_len: int) -> dict[int, int]:
     start, end = find_match(inp, "S"), find_match(inp, "E")
     dist, parents = bfs(m, end)
     cheats: dict[int, int] = defaultdict(int)
+    offsets = manhattan_offsets(cheat_len)
 
     for x, y in find_path(parents, start):
         remaining = dist[(x, y)]
-        for dx in range(-cheat_len, cheat_len + 1):
-            allowed_dy = cheat_len - abs(dx)
-            for dy in range(-allowed_dy, allowed_dy + 1):
-                nx, ny = x + dx, y + dy
-                if m.get((nx, ny)):
-                    cost = manhattan((nx, ny), (x, y))
-                    gain = remaining - dist[(nx, ny)] + cost
-                    cheats[-gain] += 1
+        for dx, dy, cost in offsets:
+            nx, ny = x + dx, y + dy
+            if m.get((nx, ny)):
+                gain = remaining - dist[(nx, ny)] + cost
+                cheats[-gain] += 1
     return cheats
 
 
