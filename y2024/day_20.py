@@ -42,7 +42,7 @@ def find_match(inp: str, lookfor: str) -> Pos:
 
 def bfs(
     maze: dict[Pos, bool], pos: Pos
-) -> tuple[dict[Pos, int], dict[Pos, Optional[Pos]]]:
+) -> tuple[dict[int, int], dict[Pos, Optional[Pos]]]:
     distances = defaultdict(lambda: sys.maxsize)
     parents = {}
     work: deque[tuple[tuple[int, int], int, Optional[tuple[int, int]]]] = deque(
@@ -52,7 +52,7 @@ def bfs(
     while work:
         (x, y), distance, parent = work.popleft()
         if not (x, y) in visited and maze.get((x, y), False):
-            distances[(x, y)] = distance
+            distances[(x & 0xFF) | ((y & 0xFF) << 8)] = distance
 
             parents[(x, y)] = parent
             visited.add((x, y))
@@ -81,15 +81,15 @@ def manhattan_offsets(cheat_len: int) -> list[tuple[int, int, int]]:
 
 
 def find_cheats(
-    dist: dict[Pos, int], path: list[Pos], cheat_len: int, mingain: int
+    dist: dict[int, int], path: list[Pos], cheat_len: int, mingain: int
 ) -> int:
     cheats: int = 0
     offsets = manhattan_offsets(cheat_len)
     for x, y in path:
-        remaining = dist[(x, y)]
+        remaining = dist[(x & 0xFF) | ((y & 0xFF) << 8)]
         for dx, dy, cost in offsets:
             nx, ny = x + dx, y + dy
-            gain = dist.get((nx, ny), -1000) - cost - remaining
+            gain = dist.get((nx & 0xFF) | ((ny & 0xFF) << 8), -1000) - cost - remaining
             if gain >= mingain:
                 cheats += 1
     return cheats
@@ -109,8 +109,9 @@ def main(inp: str) -> str:
 def test_bfs():
     m = maze(example)
     start, end = find_match(example, "S"), find_match(example, "E")
+    (x, y) = start
     dist, parents = bfs(m, end)
     path = find_path(parents, start)
-    assert dist[start] == 84
+    assert dist[(x & 0xFF) | ((y & 0xFF) << 8)] == 84
     assert start in path and end in path
     assert len(path) == 85
