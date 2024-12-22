@@ -87,6 +87,8 @@ def find_cheats(
     offsets = manhattan_offsets(cheat_len)
     for x, y in path:
         remaining = dist[(x & 0xFF) | ((y & 0xFF) << 8)]
+        if remaining < mingain:
+            continue
         for dx, dy, cost in offsets:
             nx, ny = x + dx, y + dy
             gain = dist.get((nx & 0xFF) | ((ny & 0xFF) << 8), -1000) - cost - remaining
