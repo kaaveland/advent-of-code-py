@@ -1,6 +1,7 @@
 def main(s: str) -> str:
     blocks = s.split("\n\n")
-    keys, locks = [], []
+    keys: list[set[tuple[int, int]]] = []
+    locks: list[set[tuple[int, int]]] = []
     for block in blocks:
         dest = locks if block.startswith("#") else keys
         dest.append(

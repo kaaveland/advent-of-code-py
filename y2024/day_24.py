@@ -1,7 +1,7 @@
 from collections import defaultdict, deque
 
 
-def parse(s: str) -> tuple[dict[str, int], dict[str, tuple[str, str, str]]]:
+def parse(s: str) -> tuple[dict[str, bool], dict[str, tuple[str, str, str]]]:
     provided, calculated = s.split("\n\n")
     known = {line.split(": ")[0]: line.endswith("1") for line in provided.splitlines()}
     ops = {}
@@ -13,7 +13,7 @@ def parse(s: str) -> tuple[dict[str, int], dict[str, tuple[str, str, str]]]:
 
 
 def calculate(
-    known: dict[str, int], calculated: dict[str, tuple[str, str, str]]
+    known: dict[str, bool], calculated: dict[str, tuple[str, str, str]]
 ) -> int:
     depends_on = defaultdict(list)
     for wire, (op, lhs, rhs) in calculated.items():
