@@ -1,6 +1,6 @@
-from collections import deque, defaultdict
+from collections import deque
 from typing import Iterator, Optional, TypeAlias
-import sys
+from itertools import starmap
 
 example: str = """###############
 #...#...#.....#
@@ -43,7 +43,7 @@ def find_match(inp: str, lookfor: str) -> Pos:
 def bfs(
     maze: dict[Pos, bool], pos: Pos
 ) -> tuple[dict[int, int], dict[Pos, Optional[Pos]]]:
-    distances = defaultdict(lambda: sys.maxsize)
+    distances = {}
     parents = {}
     work: deque[tuple[tuple[int, int], int, Optional[tuple[int, int]]]] = deque(
         [(pos, 0, None)]
@@ -80,21 +80,29 @@ def manhattan_offsets(cheat_len: int) -> list[tuple[int, int, int]]:
     return offsets
 
 
+def cheats_from_point(
+    pos: [tuple[int, int]],
+    dist: dict[int, int],
+    offsets: list[tuple[int, int, int]],
+    mingain: int,
+):
+    x, y = pos
+    cheats = 0
+    remaining = dist[(x & 0xFF) | ((y & 0xFF) << 8)]
+    for dx, dy, cost in offsets:
+        nx, ny = x + dx, y + dy
+        gain = dist.get((nx & 0xFF) | ((ny & 0xFF) << 8), -1000) - cost - remaining
+        if gain >= mingain:
+            cheats += 1
+    return cheats
+
+
 def find_cheats(
     dist: dict[int, int], path: list[Pos], cheat_len: int, mingain: int
 ) -> int:
-    cheats: int = 0
     offsets = manhattan_offsets(cheat_len)
-    for x, y in path:
-        remaining = dist[(x & 0xFF) | ((y & 0xFF) << 8)]
-        if remaining < mingain:
-            continue
-        for dx, dy, cost in offsets:
-            nx, ny = x + dx, y + dy
-            gain = dist.get((nx & 0xFF) | ((ny & 0xFF) << 8), -1000) - cost - remaining
-            if gain >= mingain:
-                cheats += 1
-    return cheats
+    arglist = ((pos, dist, offsets, mingain) for pos in path)
+    return sum(starmap(cheats_from_point, arglist))
 
 
 def main(inp: str) -> str:
